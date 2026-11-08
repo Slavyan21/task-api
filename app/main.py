@@ -1,19 +1,26 @@
 import asyncio
+import logging
 
 from fastapi import FastAPI, HTTPException, status
 from pydantic import BaseModel, Field
 
-app = FastAPI(title="Task Manager")
+from app.core.config import settings
+from app.core.logging import setup_logging
+
+setup_logging(settings.log_level)
+logger = logging.getLogger(__name__)
+
+app = FastAPI(
+    title=settings.app_name,
+    version=settings.app_version,
+    debug=settings.debug,
+)
 
 
 class TaskCreate(BaseModel):
     title: str = Field(min_length=1, max_length=200)
     description: str = Field(default="", max_length=2000)
 
-class TaskUpdate(BaseModel):
-    title: str | None = Field(default=None, min_length=1, max_length=200)
-    description: str | None = Field(default=None, max_length=2000)
-    done: bool | None = None
 
 class Task(BaseModel):
     id: int
@@ -22,12 +29,20 @@ class Task(BaseModel):
     done: bool = False
 
 
+class TaskUpdate(BaseModel):
+    title: str | None = Field(default=None, min_length=1, max_length=200)
+    description: str | None = Field(default=None, max_length=2000)
+    done: bool | None = None
+
+
 tasks: dict[int, Task] = {}
 next_id: int = 1
 
 
 @app.get("/health")
 async def health():
+    logger.debug("health check details: status=ok")
+    logger.info("health check called")
     return {"status": "ok"}
 
 
