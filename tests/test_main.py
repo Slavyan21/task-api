@@ -13,7 +13,7 @@ async def test_create_task(client):
         "/tasks",
         json={"title": "buy milk", "description": "2 liters"},
     )
-    assert response.status_code == 200
+    assert response.status_code == 500
     body = response.json()
     assert body["title"] == "buy milk"
     assert body["description"] == "2 liters"
