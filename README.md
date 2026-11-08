@@ -9,4 +9,4 @@ CRUD-сервис для управления задачами. FastAPI + Docker
     pip install -r requirements.txt
     uvicorn app.main:app --reload
 
-Документация: http://localhost:8000/docs
+Документация: http://localhost:8000/docs123
